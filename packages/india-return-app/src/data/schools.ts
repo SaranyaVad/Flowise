@@ -50,6 +50,14 @@ export interface School {
     outcomeHighlight: string
     /** Typical extra costs beyond tuition for activities/sports/electives — indicative, not a quote. */
     extraFeesNote: string
+    /**
+     * Whether lunch is compulsory/included. Almost universally "no" in India — most day students
+     * bring a home-packed tiffin; some schools offer an optional paid canteen/meal plan on top.
+     */
+    lunchNote: string
+    /** Annual school bus/transport fee range — nearly always billed separately from tuition, by distance zone. */
+    busFeeAnnualINR: [number, number]
+    busFeeNote: string
 }
 
 export const CITY = 'Hyderabad'
@@ -64,7 +72,10 @@ const budgetDefaults = {
     extracurriculars: ['Cricket / basketball', 'NCC / Scouts & Guides', 'Annual cultural day', 'Yoga & fitness'],
     outcomeHighlight:
         'Exam-focused pedagogy oriented toward strong board results and JEE/NEET pipelines; batch-level results are not independently published.',
-    extraFeesNote: 'Sports/activity fees are typically modest and often bundled into tuition — ask about transport and lab fees separately.'
+    extraFeesNote: 'Sports/activity fees are typically modest and often bundled into tuition — ask about transport and lab fees separately.',
+    lunchNote: 'Not compulsory — almost all students bring a home-packed lunch; not included in fees. Canteen/snack counters (if any) are pay-as-you-go.',
+    busFeeAnnualINR: [15000, 35000] as [number, number],
+    busFeeNote: 'Distance/zone-based, billed separately from tuition each year.'
 }
 
 const midDefaults = {
@@ -72,7 +83,11 @@ const midDefaults = {
     extracurriculars: ['Basketball / cricket academy', 'Music (instrumental/vocal)', 'Dance', 'Debate & MUN', 'Robotics & coding club'],
     outcomeHighlight:
         'Balanced academics-plus-activities profile typical of established CBSE/ICSE schools; consistent board results without a single published ranking.',
-    extraFeesNote: 'Sports coaching, music/dance electives and transport are usually billed separately — roughly ₹5,000–15,000/year on top of tuition.'
+    extraFeesNote: 'Sports coaching, music/dance electives and transport are usually billed separately — roughly ₹5,000–15,000/year on top of tuition.',
+    lunchNote:
+        'Not compulsory — most students bring a home-packed lunch. Some campuses offer an optional paid canteen/meal plan (roughly ₹1,500–3,000/month) on top of fees.',
+    busFeeAnnualINR: [25000, 55000] as [number, number],
+    busFeeNote: 'Distance/zone-based, billed separately from tuition each year.'
 }
 
 const premiumDefaults = {
@@ -81,7 +96,11 @@ const premiumDefaults = {
     outcomeHighlight:
         'University counselling geared toward global placements (US/UK/India); IB average scores and destination lists are usually shared only with enrolled families, not published.',
     extraFeesNote:
-        'Specialised programs (competitive sports academies, music conservatories, overseas trips) often carry substantial fees on top of tuition — commonly ₹30,000–1,00,000+/year.'
+        'Specialised programs (competitive sports academies, music conservatories, overseas trips) often carry substantial fees on top of tuition — commonly ₹30,000–1,00,000+/year.',
+    lunchNote:
+        'Not compulsory day-to-day, but many premium/full-day campuses run an in-house catered meal plan (sometimes the default for younger grades) billed separately, roughly ₹2,500–5,000/month.',
+    busFeeAnnualINR: [40000, 90000] as [number, number],
+    busFeeNote: 'Distance/zone-based, billed separately from tuition each year — AC buses and longer routes push premium-tier transport toward the top of the range.'
 }
 
 // Fee figures are annual tuition only (2025-26 indicative), gathered from public fee
@@ -130,7 +149,11 @@ export const schools: School[] = [
         strengths: ['Global University Placement', 'STEM & Robotics', 'Academics'],
         extracurriculars: ['Robotics & coding (strong STEM emphasis)', 'Model UN', 'Sports academies', 'Music & theatre', 'Community service'],
         outcomeHighlight: 'Strong university counselling and STEM/robotics program; specific placement statistics are not independently published, but it is the most cited IT-corridor choice for global-track families.',
-        extraFeesNote: 'IB/IGCSE campuses and specialised STEM programs carry higher activity fees than the CBSE campuses — confirm per-campus.'
+        extraFeesNote: 'IB/IGCSE campuses and specialised STEM programs carry higher activity fees than the CBSE campuses — confirm per-campus.',
+        lunchNote:
+            'Not compulsory — most students bring a home-packed lunch. An optional in-house canteen/meal plan is available on top of fees on most campuses.',
+        busFeeAnnualINR: [30000, 65000],
+        busFeeNote: 'Distance/zone-based, billed separately from tuition each year.'
     },
     {
         name: 'Oakridge International School',
@@ -159,7 +182,10 @@ export const schools: School[] = [
         strengths: ['Global University Placement', 'Leadership & Communication', 'Arts & Culture'],
         extracurriculars: ['Residential/boarding community life', 'Debate & Model UN', 'Community service programme', 'Visual & performing arts', 'Sports'],
         outcomeHighlight: 'Highly selective admissions and a global scholar network geared toward top international university placement; part of a small worldwide network of Aga Khan Academies with shared IB standards.',
-        extraFeesNote: 'Boarding fees are substantially higher than day-scholar fees; ask for a full boarding cost breakdown separately from tuition.'
+        extraFeesNote: 'Boarding fees are substantially higher than day-scholar fees; ask for a full boarding cost breakdown separately from tuition.',
+        lunchNote: 'Included for boarding students as part of the boarding fee; day scholars typically use the campus dining hall on a separate paid basis.',
+        busFeeAnnualINR: [40000, 80000],
+        busFeeNote: 'Applies to day scholars only — distance/zone-based, billed separately from tuition each year.'
     },
     {
         name: 'Global Indian International School (GIIS)',
@@ -232,7 +258,8 @@ export const schools: School[] = [
         reputationNote: "One of India's most established IB boarding+day schools; strong global university placement.",
         ...premiumDefaults,
         extracurriculars: ['Boarding house/community life', 'Extensive sports academies', 'Robotics & coding lab', 'Debate & MUN', 'Performing arts'],
-        outcomeHighlight: "One of India's longest-running IB boarding schools; consistently cited for global university placement, though exact IB average scores/destination breakdowns are not publicly released."
+        outcomeHighlight: "One of India's longest-running IB boarding schools; consistently cited for global university placement, though exact IB average scores/destination breakdowns are not publicly released.",
+        lunchNote: 'Included for boarding students as part of the boarding fee; day scholars typically bring lunch or use the campus canteen on a separate paid basis.'
     },
     {
         name: 'The Gaudium School',
@@ -674,7 +701,10 @@ export const schools: School[] = [
         ...budgetDefaults,
         strengths: ['Academics', 'Leadership & Communication'],
         extracurriculars: ['Residential/boarding community life', 'Cricket / basketball', 'NCC', 'Annual cultural day'],
-        extraFeesNote: 'Boarding/residential fees are billed separately from tuition — confirm the full residential cost breakdown.'
+        extraFeesNote: 'Boarding/residential fees are billed separately from tuition — confirm the full residential cost breakdown.',
+        lunchNote: 'Included as part of the residential/boarding fee — this is a fully residential school.',
+        busFeeAnnualINR: [0, 0],
+        busFeeNote: 'Not applicable for boarders; day-scholar transport (if offered) would be billed separately.'
     },
     {
         name: 'Narayana / Sri Chaitanya IIT-JEE feeder campuses',

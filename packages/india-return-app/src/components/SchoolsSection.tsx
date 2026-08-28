@@ -65,11 +65,14 @@ export function SchoolsSection() {
         <section>
             <h2>Schools & Fees</h2>
             <p className='section-intro'>
-                Annual tuition fee ranges for well-known schools in Hyderabad. Fees typically rise 8-10% a year and vary by
-                grade/campus — confirm current figures with the school before committing. The rating is an informal reputation
-                score, and strengths/outcomes are general characterizations, not audited statistics — India has no Ofsted
-                equivalent and no single centralized results database like the UK's exam league tables or "Oxbridge %"
-                metric, so most schools don't publish batch-level results. Ask the school directly for real numbers.
+                Annual tuition fee ranges for well-known schools in Hyderabad, plus typical bus/transport fees and lunch
+                policy. Fees typically rise 8-10% a year and vary by grade/campus — confirm current figures with the school
+                before committing. The rating is an informal reputation score, and strengths/outcomes are general
+                characterizations, not audited statistics — India has no Ofsted equivalent and no single centralized results
+                database like the UK's exam league tables or "Oxbridge %" metric, so most schools don't publish batch-level
+                results. Lunch is essentially never compulsory or included in fees in India — almost all day students bring a
+                home-packed lunch; transport is nearly universal but always billed separately. Ask the school directly for
+                exact numbers.
             </p>
             <div className='filters'>
                 <label>
@@ -181,6 +184,16 @@ export function SchoolsSection() {
                             </p>
                         )}
                         {s.notes && <p className='muted'>{s.notes}</p>}
+                        <p>
+                            <strong>Bus fee:</strong>{' '}
+                            {s.busFeeAnnualINR[1] > 0 ? `${formatMoneyRange(s.busFeeAnnualINR)}/year` : 'N/A'}
+                        </p>
+                        <p className='muted small'>
+                            <strong>Bus:</strong> {s.busFeeNote}
+                        </p>
+                        <p className='muted small'>
+                            <strong>Lunch:</strong> {s.lunchNote}
+                        </p>
                         <p className='card-strengths'>
                             {s.strengths.map((st) => (
                                 <span key={st} className='tag tag-strength'>
