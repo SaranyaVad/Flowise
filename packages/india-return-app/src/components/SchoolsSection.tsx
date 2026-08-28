@@ -1,8 +1,11 @@
 import { useMemo, useState } from 'react'
 import { schools, schoolTierLabels, SchoolTier } from '../data/schools'
+import { localities } from '../data/housing'
 import { formatRangeINR } from '../format'
+import { distanceKm } from '../calc'
 
 const tiers: (SchoolTier | 'all')[] = ['all', 'budget', 'mid', 'premium']
+const radiusOptions = [2, 5, 10, 15, 20, 30]
 
 function StarRating({ score }: { score: number }) {
     const full = Math.floor(score)
@@ -22,6 +25,8 @@ export function SchoolsSection() {
     const [tierFilter, setTierFilter] = useState<SchoolTier | 'all'>('all')
     const [board, setBoard] = useState<string>('all')
     const [query, setQuery] = useState('')
+    const [nearLocality, setNearLocality] = useState('all')
+    const [radiusKm, setRadiusKm] = useState(10)
 
     const boards = useMemo(() => {
         const set = new Set<string>()
@@ -29,12 +34,25 @@ export function SchoolsSection() {
         return ['all', ...Array.from(set).sort()]
     }, [])
 
-    const filtered = schools.filter((s) => {
-        if (tierFilter !== 'all' && s.tier !== tierFilter) return false
-        if (board !== 'all' && !s.boards.includes(board)) return false
-        if (query && !`${s.name} ${s.area}`.toLowerCase().includes(query.toLowerCase())) return false
-        return true
-    })
+    const sortedLocalityNames = useMemo(() => [...localities.map((l) => l.name)].sort((a, b) => a.localeCompare(b)), [])
+
+    const referenceCoords = useMemo(
+        () => (nearLocality === 'all' ? null : localities.find((l) => l.name === nearLocality)?.coordinates ?? null),
+        [nearLocality]
+    )
+
+    const filtered = schools
+        .filter((s) => {
+            if (tierFilter !== 'all' && s.tier !== tierFilter) return false
+            if (board !== 'all' && !s.boards.includes(board)) return false
+            if (query && !`${s.name} ${s.area}`.toLowerCase().includes(query.toLowerCase())) return false
+            if (referenceCoords && distanceKm(referenceCoords, s.coordinates) > radiusKm) return false
+            return true
+        })
+        .sort((a, b) => {
+            if (!referenceCoords) return 0
+            return distanceKm(referenceCoords, a.coordinates) - distanceKm(referenceCoords, b.coordinates)
+        })
 
     return (
         <section>
@@ -75,6 +93,31 @@ export function SchoolsSection() {
                         ))}
                     </select>
                 </label>
+                <label>
+                    Near{' '}
+                    <select value={nearLocality} onChange={(e) => setNearLocality(e.target.value)}>
+                        <option value='all'>Anywhere</option>
+                        {sortedLocalityNames.map((name) => (
+                            <option key={name} value={name}>
+                                {name}
+                            </option>
+                        ))}
+                    </select>
+                </label>
+                <label>
+                    Within{' '}
+                    <select
+                        value={radiusKm}
+                        onChange={(e) => setRadiusKm(Number(e.target.value))}
+                        disabled={nearLocality === 'all'}
+                    >
+                        {radiusOptions.map((km) => (
+                            <option key={km} value={km}>
+                                {km} km
+                            </option>
+                        ))}
+                    </select>
+                </label>
             </div>
             <p className='muted small' style={{ marginTop: '-8px', marginBottom: '16px' }}>
                 Showing {filtered.length} of {schools.length} schools
@@ -86,6 +129,11 @@ export function SchoolsSection() {
                         <p className='muted'>{s.area}</p>
                         <p>
                             <span className={`tag tag-${s.tier}`}>{schoolTierLabels[s.tier]}</span>
+                            {referenceCoords && (
+                                <span className='muted small' style={{ marginLeft: '8px' }}>
+                                    {distanceKm(referenceCoords, s.coordinates).toFixed(1)} km from {nearLocality}
+                                </span>
+                            )}
                         </p>
                         <p>
                             <StarRating score={s.reputationScore} />
