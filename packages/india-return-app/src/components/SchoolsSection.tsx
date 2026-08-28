@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { schools, schoolTierLabels, SchoolTier } from '../data/schools'
+import { schools, schoolTierLabels, schoolStrengthLabels, SchoolTier, SchoolStrength } from '../data/schools'
 import { localities } from '../data/housing'
 import { distanceKm } from '../calc'
 import { useCurrency } from '../CurrencyContext'
@@ -7,6 +7,7 @@ import { useCurrency } from '../CurrencyContext'
 const tiers: (SchoolTier | 'all')[] = ['all', 'budget', 'mid', 'premium']
 const radiusOptions = [2, 5, 10, 15, 20, 30]
 const ratingOptions = [4.5, 4, 3.5, 3]
+const allStrengths = Object.keys(schoolStrengthLabels) as SchoolStrength[]
 
 function StarRating({ score }: { score: number }) {
     const full = Math.floor(score)
@@ -30,6 +31,7 @@ export function SchoolsSection() {
     const [nearLocality, setNearLocality] = useState('all')
     const [radiusKm, setRadiusKm] = useState(10)
     const [minRating, setMinRating] = useState(0)
+    const [strengthFilter, setStrengthFilter] = useState<SchoolStrength | 'all'>('all')
 
     const boards = useMemo(() => {
         const set = new Set<string>()
@@ -51,6 +53,7 @@ export function SchoolsSection() {
             if (query && !`${s.name} ${s.area}`.toLowerCase().includes(query.toLowerCase())) return false
             if (referenceCoords && distanceKm(referenceCoords, s.coordinates) > radiusKm) return false
             if (minRating > 0 && s.reputationScore < minRating) return false
+            if (strengthFilter !== 'all' && !s.strengths.includes(strengthFilter)) return false
             return true
         })
         .sort((a, b) => {
@@ -63,9 +66,10 @@ export function SchoolsSection() {
             <h2>Schools & Fees</h2>
             <p className='section-intro'>
                 Annual tuition fee ranges for well-known schools in Hyderabad. Fees typically rise 8-10% a year and vary by
-                grade/campus — confirm current figures with the school before committing. The rating shown is an informal
-                reputation score aggregated from published rankings and parent-review sites — India has no single official
-                inspection body (no Ofsted equivalent), so treat it as a rough signal, not an audited score.
+                grade/campus — confirm current figures with the school before committing. The rating is an informal reputation
+                score, and strengths/outcomes are general characterizations, not audited statistics — India has no Ofsted
+                equivalent and no single centralized results database like the UK's exam league tables or "Oxbridge %"
+                metric, so most schools don't publish batch-level results. Ask the school directly for real numbers.
             </p>
             <div className='filters'>
                 <label>
@@ -104,6 +108,17 @@ export function SchoolsSection() {
                         {ratingOptions.map((r) => (
                             <option key={r} value={r}>
                                 {r.toFixed(1)}+ ★
+                            </option>
+                        ))}
+                    </select>
+                </label>
+                <label>
+                    Good at{' '}
+                    <select value={strengthFilter} onChange={(e) => setStrengthFilter(e.target.value as SchoolStrength | 'all')}>
+                        <option value='all'>Anything</option>
+                        {allStrengths.map((s) => (
+                            <option key={s} value={s}>
+                                {schoolStrengthLabels[s]}
                             </option>
                         ))}
                     </select>
@@ -166,6 +181,22 @@ export function SchoolsSection() {
                             </p>
                         )}
                         {s.notes && <p className='muted'>{s.notes}</p>}
+                        <p className='card-strengths'>
+                            {s.strengths.map((st) => (
+                                <span key={st} className='tag tag-strength'>
+                                    {schoolStrengthLabels[st]}
+                                </span>
+                            ))}
+                        </p>
+                        <p>
+                            <strong>Extracurriculars:</strong> {s.extracurriculars.join(', ')}
+                        </p>
+                        <p className='muted small'>
+                            <strong>Outcomes:</strong> {s.outcomeHighlight}
+                        </p>
+                        <p className='muted small'>
+                            <strong>Extra fees:</strong> {s.extraFeesNote}
+                        </p>
                     </div>
                 ))}
             </div>
