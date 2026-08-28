@@ -1,10 +1,15 @@
 import { useState } from 'react'
 import { seniorityLevels, trackLabels, Track } from '../data/salaries'
-import { formatRangeLPA } from '../format'
+import { useCurrency } from '../CurrencyContext'
 
 const tracks: Track[] = ['tech-ic', 'tech-management', 'product', 'general-corporate']
 
+function lpaRangeToInr(range: [number, number]): [number, number] {
+    return [range[0] * 100000, range[1] * 100000]
+}
+
 export function SalariesSection() {
+    const { formatSalaryRange } = useCurrency()
     const [track, setTrack] = useState<Track>('tech-ic')
     const rows = seniorityLevels.filter((s) => s.track === track)
 
@@ -48,8 +53,8 @@ export function SalariesSection() {
                                 </td>
                                 <td className='muted'>{r.typicalTitles}</td>
                                 <td>{r.yearsExperience}</td>
-                                <td>{r.itServicesCtcLPA ? formatRangeLPA(r.itServicesCtcLPA) : '—'}</td>
-                                <td>{formatRangeLPA(r.productCompanyCtcLPA)}</td>
+                                <td>{r.itServicesCtcLPA ? formatSalaryRange(lpaRangeToInr(r.itServicesCtcLPA)) : '—'}</td>
+                                <td>{formatSalaryRange(lpaRangeToInr(r.productCompanyCtcLPA))}</td>
                             </tr>
                         ))}
                     </tbody>

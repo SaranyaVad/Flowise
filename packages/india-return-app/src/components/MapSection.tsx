@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet'
 import { schools, schoolTierLabels, SchoolTier } from '../data/schools'
 import { localities, localityTierLabels, LocalityTier } from '../data/housing'
-import { formatRangeINR } from '../format'
+import { useCurrency } from '../CurrencyContext'
 
 const HYDERABAD_CENTER: [number, number] = [17.428, 78.412]
 
@@ -15,6 +15,7 @@ const TIER_COLOR: Record<'budget' | 'mid' | 'premium', string> = {
 type LayerFilter = 'both' | 'schools' | 'localities'
 
 export function MapSection() {
+    const { formatMoneyRange } = useCurrency()
     const [layer, setLayer] = useState<LayerFilter>('both')
     const [tierFilter, setTierFilter] = useState<SchoolTier | LocalityTier | 'all'>('all')
 
@@ -82,9 +83,9 @@ export function MapSection() {
                             <Popup>
                                 <strong>{l.name}</strong>
                                 <div>{localityTierLabels[l.tier]} locality</div>
-                                <div>2BHK rent: {formatRangeINR(l.rentMonthlyINR.twoBHK)}/mo</div>
-                                <div>3BHK rent: {formatRangeINR(l.rentMonthlyINR.threeBHK)}/mo</div>
-                                <div>Buy: {formatRangeINR(l.buyPricePerSqftINR)}/sqft</div>
+                                <div>2BHK rent: {formatMoneyRange(l.rentMonthlyINR.twoBHK)}/mo</div>
+                                <div>3BHK rent: {formatMoneyRange(l.rentMonthlyINR.threeBHK)}/mo</div>
+                                <div>Buy: {formatMoneyRange(l.buyPricePerSqftINR)}/sqft</div>
                             </Popup>
                         </CircleMarker>
                     ))}
@@ -101,7 +102,7 @@ export function MapSection() {
                                 <div>{schoolTierLabels[s.tier]}</div>
                                 <div>Rating: {s.reputationScore.toFixed(1)}/5</div>
                                 <div>Boards: {s.boards.join(', ')}</div>
-                                <div>Annual tuition: {formatRangeINR(s.annualTuitionFeeINR)}</div>
+                                <div>Annual tuition: {formatMoneyRange(s.annualTuitionFeeINR)}</div>
                             </Popup>
                         </CircleMarker>
                     ))}

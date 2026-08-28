@@ -5,6 +5,8 @@ import { SalariesSection } from './components/SalariesSection'
 import { LifestyleCalculator } from './components/LifestyleCalculator'
 import { MapSection } from './components/MapSection'
 import { InsightsSection } from './components/InsightsSection'
+import { CurrencyProvider, useCurrency, currencies } from './CurrencyContext'
+import { CurrencyCode } from './data/currency'
 import { CITY } from './data/schools'
 
 type Tab = 'schools' | 'housing' | 'map' | 'salaries' | 'calculator' | 'insights'
@@ -18,7 +20,28 @@ const tabs: { id: Tab; label: string }[] = [
     { id: 'insights', label: 'Common Questions' }
 ]
 
-export default function App() {
+function CurrencySelector() {
+    const { currency, setCurrency, isForeign } = useCurrency()
+    return (
+        <div className='currency-selector'>
+            <label>
+                Show amounts in{' '}
+                <select value={currency} onChange={(e) => setCurrency(e.target.value as CurrencyCode)}>
+                    {currencies.map((c) => (
+                        <option key={c.code} value={c.code}>
+                            {c.label}
+                        </option>
+                    ))}
+                </select>
+            </label>
+            {isForeign && (
+                <span className='muted small'>Approximate 2025-26 rates, not live — check a real rate before transferring money.</span>
+            )}
+        </div>
+    )
+}
+
+function AppShell() {
     const [tab, setTab] = useState<Tab>('schools')
 
     return (
@@ -26,6 +49,7 @@ export default function App() {
             <header className='app-header'>
                 <h1>Return to India — {CITY} Guide</h1>
                 <p className='muted'>Schools, housing, and pay benchmarks to plan a move back home.</p>
+                <CurrencySelector />
             </header>
             <nav className='tabs'>
                 {tabs.map((t) => (
@@ -49,5 +73,13 @@ export default function App() {
                 </p>
             </footer>
         </div>
+    )
+}
+
+export default function App() {
+    return (
+        <CurrencyProvider>
+            <AppShell />
+        </CurrencyProvider>
     )
 }

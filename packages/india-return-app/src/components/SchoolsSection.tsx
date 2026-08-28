@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react'
 import { schools, schoolTierLabels, SchoolTier } from '../data/schools'
 import { localities } from '../data/housing'
-import { formatRangeINR } from '../format'
 import { distanceKm } from '../calc'
+import { useCurrency } from '../CurrencyContext'
 
 const tiers: (SchoolTier | 'all')[] = ['all', 'budget', 'mid', 'premium']
 const radiusOptions = [2, 5, 10, 15, 20, 30]
@@ -23,6 +23,7 @@ function StarRating({ score }: { score: number }) {
 }
 
 export function SchoolsSection() {
+    const { formatMoneyRange } = useCurrency()
     const [tierFilter, setTierFilter] = useState<SchoolTier | 'all'>('all')
     const [board, setBoard] = useState<string>('all')
     const [query, setQuery] = useState('')
@@ -157,11 +158,11 @@ export function SchoolsSection() {
                             <strong>Boards:</strong> {s.boards.join(', ')}
                         </p>
                         <p>
-                            <strong>Annual tuition:</strong> {formatRangeINR(s.annualTuitionFeeINR)}
+                            <strong>Annual tuition:</strong> {formatMoneyRange(s.annualTuitionFeeINR)}
                         </p>
                         {s.oneTimeAdmissionINR && (
                             <p>
-                                <strong>One-time admission:</strong> {formatRangeINR(s.oneTimeAdmissionINR)}
+                                <strong>One-time admission:</strong> {formatMoneyRange(s.oneTimeAdmissionINR)}
                             </p>
                         )}
                         {s.notes && <p className='muted'>{s.notes}</p>}

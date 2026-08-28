@@ -2,10 +2,12 @@ import { useMemo, useState } from 'react'
 import { localities, localityTierLabels, LocalityTier } from '../data/housing'
 import { formatINR } from '../format'
 import { calculateEmi, average } from '../calc'
+import { useCurrency } from '../CurrencyContext'
 
 const tiers: (LocalityTier | 'all')[] = ['all', 'budget', 'mid', 'premium']
 
 export function HousingSection() {
+    const { formatMoney } = useCurrency()
     const [tierFilter, setTierFilter] = useState<LocalityTier | 'all'>('all')
     const [localityName, setLocalityName] = useState('all')
 
@@ -96,13 +98,13 @@ export function HousingSection() {
                                 </td>
                                 <td className='muted'>{l.knownFor}</td>
                                 <td>
-                                    {formatINR(l.rentMonthlyINR.twoBHK[0])} – {formatINR(l.rentMonthlyINR.twoBHK[1])}
+                                    {formatMoney(l.rentMonthlyINR.twoBHK[0])} – {formatMoney(l.rentMonthlyINR.twoBHK[1])}
                                 </td>
                                 <td>
-                                    {formatINR(l.rentMonthlyINR.threeBHK[0])} – {formatINR(l.rentMonthlyINR.threeBHK[1])}
+                                    {formatMoney(l.rentMonthlyINR.threeBHK[0])} – {formatMoney(l.rentMonthlyINR.threeBHK[1])}
                                 </td>
                                 <td>
-                                    {formatINR(l.buyPricePerSqftINR[0])} – {formatINR(l.buyPricePerSqftINR[1])}
+                                    {formatMoney(l.buyPricePerSqftINR[0])} – {formatMoney(l.buyPricePerSqftINR[1])}
                                 </td>
                             </tr>
                         ))}
@@ -159,27 +161,27 @@ export function HousingSection() {
                     <tbody>
                         <tr>
                             <td>Total price</td>
-                            <td>{formatINR(totalPrice)}</td>
+                            <td>{formatMoney(totalPrice)}</td>
                         </tr>
                         <tr>
                             <td>Down payment</td>
-                            <td>{formatINR(totalPrice - loanAmount)}</td>
+                            <td>{formatMoney(totalPrice - loanAmount)}</td>
                         </tr>
                         <tr>
                             <td>Loan amount</td>
-                            <td>{formatINR(loanAmount)}</td>
+                            <td>{formatMoney(loanAmount)}</td>
                         </tr>
                         <tr className='total-row'>
                             <td>Monthly EMI</td>
-                            <td>{formatINR(monthlyEmi)}</td>
+                            <td>{formatMoney(monthlyEmi)}</td>
                         </tr>
                         <tr>
                             <td>Total interest over {tenureYears} years</td>
-                            <td>{formatINR(totalInterest)}</td>
+                            <td>{formatMoney(totalInterest)}</td>
                         </tr>
                         <tr>
                             <td>Total repaid (loan + interest)</td>
-                            <td>{formatINR(totalPayment)}</td>
+                            <td>{formatMoney(totalPayment)}</td>
                         </tr>
                     </tbody>
                 </table>

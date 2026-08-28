@@ -12,7 +12,7 @@ import {
 import { localities, LocalityTier } from '../data/housing'
 import { schools, SchoolTier } from '../data/schools'
 import { calculateEmi } from '../calc'
-import { formatINR, formatLPA } from '../format'
+import { useCurrency } from '../CurrencyContext'
 
 const FLAT_SIZE_SQFT = { twoBHK: 1000, threeBHK: 1450 }
 
@@ -37,11 +37,10 @@ function addRanges(...ranges: Range[]): Range {
 function fixedRange(n: number): Range {
     return { low: n, high: n }
 }
-function formatRangeINR(r: Range): string {
-    return r.low === r.high ? formatINR(r.low) : `${formatINR(r.low)} – ${formatINR(r.high)}`
-}
 
 export function LifestyleCalculator() {
+    const { formatMoney, formatMoneyRange, formatSalary, currency } = useCurrency()
+    const formatRange = (r: Range) => formatMoneyRange([r.low, r.high])
     const [adults, setAdults] = useState(2)
     const [kids, setKids] = useState(1)
     const [lifestyleTier, setLifestyleTier] = useState<LifestyleTier>('comfortable')
@@ -241,16 +240,16 @@ export function LifestyleCalculator() {
                             {LIFESTYLE_CATEGORY_LABELS.map((c) => (
                                 <tr key={c.key}>
                                     <td>{c.label}</td>
-                                    <td>{formatINR(selectedBaseline.monthlyPerAdultINR[c.key])}</td>
+                                    <td>{formatMoney(selectedBaseline.monthlyPerAdultINR[c.key])}</td>
                                 </tr>
                             ))}
                             <tr className='total-row'>
                                 <td>Per adult, per month</td>
-                                <td>{formatINR(selectedBaselinePerAdultTotal)}</td>
+                                <td>{formatMoney(selectedBaselinePerAdultTotal)}</td>
                             </tr>
                             <tr>
                                 <td>Domestic help (household, if selected below)</td>
-                                <td>{formatINR(selectedBaseline.domesticHelpMonthlyINR)}</td>
+                                <td>{formatMoney(selectedBaseline.domesticHelpMonthlyINR)}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -448,7 +447,7 @@ export function LifestyleCalculator() {
                 </div>
                 {savingsMode === 'goal' && (
                     <p className='muted small'>
-                        Estimated monthly savings needed: <strong>{formatINR(result.goalSavings)}</strong>. Assumes a 25×-expenses
+                        Estimated monthly savings needed: <strong>{formatMoney(result.goalSavings)}</strong>. Assumes a 25×-expenses
                         retirement corpus (the "4% rule") and 10%/year returns — a rough planning heuristic, not financial
                         advice.
                     </p>
@@ -461,12 +460,12 @@ export function LifestyleCalculator() {
                     <tbody>
                         <tr>
                             <td>Adults' living costs</td>
-                            <td>{formatRangeINR(result.adultLiving)}</td>
+                            <td>{formatRange(result.adultLiving)}</td>
                         </tr>
                         {kids > 0 && (
                             <tr>
                                 <td>Kids' living costs</td>
-                                <td>{formatRangeINR(result.kidLiving)}</td>
+                                <td>{formatRange(result.kidLiving)}</td>
                             </tr>
                         )}
                         <tr>
@@ -474,43 +473,43 @@ export function LifestyleCalculator() {
                                 Housing ({housingMode === 'rent' ? 'rent' : 'EMI'})
                                 <div className='muted small'>{result.housingNote}</div>
                             </td>
-                            <td>{formatRangeINR(result.housingMonthly)}</td>
+                            <td>{formatRange(result.housingMonthly)}</td>
                         </tr>
                         {kids > 0 && (
                             <tr>
                                 <td>Schooling (amortized monthly)</td>
-                                <td>{formatRangeINR(result.schoolingMonthly)}</td>
+                                <td>{formatRange(result.schoolingMonthly)}</td>
                             </tr>
                         )}
                         <tr>
                             <td>Transport ({transportModeLabels[transportMode]})</td>
-                            <td>{formatINR(result.transportMonthly)}</td>
+                            <td>{formatMoney(result.transportMonthly)}</td>
                         </tr>
                         {wantsHelp && (
                             <tr>
                                 <td>Domestic help</td>
-                                <td>{formatINR(result.helpMonthly)}</td>
+                                <td>{formatMoney(result.helpMonthly)}</td>
                             </tr>
                         )}
                         <tr>
                             <td>Holidays/travel</td>
-                            <td>{formatINR(result.holidaysMonthly)}</td>
+                            <td>{formatMoney(result.holidaysMonthly)}</td>
                         </tr>
                         <tr>
                             <td>Miscellaneous</td>
-                            <td>{formatINR(result.miscMonthly)}</td>
+                            <td>{formatMoney(result.miscMonthly)}</td>
                         </tr>
                         <tr>
                             <td>Savings ({savingsMode === 'manual' ? 'your target' : 'retirement goal'})</td>
-                            <td>{formatINR(result.savingsMonthly.low)}</td>
+                            <td>{formatMoney(result.savingsMonthly.low)}</td>
                         </tr>
                         <tr className='total-row'>
                             <td>Total monthly</td>
-                            <td>{formatRangeINR(result.totalMonthly)}</td>
+                            <td>{formatRange(result.totalMonthly)}</td>
                         </tr>
                         <tr>
                             <td>Total annual</td>
-                            <td>{formatRangeINR(result.totalAnnual)}</td>
+                            <td>{formatRange(result.totalAnnual)}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -519,13 +518,18 @@ export function LifestyleCalculator() {
                     <div>
                         <span className='label'>Salary needed (with your savings target already included)</span>
                         <span className='value big'>
-                            {formatINR(result.requiredCtc.low / 12)}
-                            {result.requiredCtc.low !== result.requiredCtc.high ? ` – ${formatINR(result.requiredCtc.high / 12)}` : ''}/month
+                            {formatMoney(result.requiredCtc.low / 12)}
+                            {result.requiredCtc.low !== result.requiredCtc.high ? ` – ${formatMoney(result.requiredCtc.high / 12)}` : ''}/month
                         </span>
                         <span className='sub-value'>
-                            {formatRangeINR(rangeOf(result.requiredCtc.low, result.requiredCtc.high))}/year CTC (
-                            {formatLPA(result.requiredCtc.low)}
-                            {result.requiredCtc.low !== result.requiredCtc.high ? ` – ${formatLPA(result.requiredCtc.high)}` : ''})
+                            {formatRange(rangeOf(result.requiredCtc.low, result.requiredCtc.high))}/year CTC
+                            {currency === 'INR' && (
+                                <>
+                                    {' '}
+                                    ({formatSalary(result.requiredCtc.low)}
+                                    {result.requiredCtc.low !== result.requiredCtc.high ? ` – ${formatSalary(result.requiredCtc.high)}` : ''})
+                                </>
+                            )}
                         </span>
                     </div>
                 </div>
