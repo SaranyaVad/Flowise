@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { localities, localityTierLabels, LocalityTier } from '../data/housing'
 import { formatINR } from '../format'
+import { calculateEmi, average } from '../calc'
 
 const tiers: (LocalityTier | 'all')[] = ['all', 'budget', 'mid', 'premium']
 
@@ -15,6 +16,25 @@ export function HousingSection() {
         if (tierFilter !== 'all' && l.tier !== tierFilter) return false
         return true
     })
+
+    const overallAvgSqft = useMemo(() => localities.reduce((s, l) => s + average(l.buyPricePerSqftINR), 0) / localities.length, [])
+
+    const [sizeSqft, setSizeSqft] = useState(1400)
+    const [pricePerSqft, setPricePerSqft] = useState(Math.round(overallAvgSqft))
+    const [downPaymentPct, setDownPaymentPct] = useState(20)
+    const [interestRatePct, setInterestRatePct] = useState(8.5)
+    const [tenureYears, setTenureYears] = useState(20)
+
+    const suggestedPricePerSqft = useMemo(() => {
+        if (filtered.length === 0) return overallAvgSqft
+        return filtered.reduce((s, l) => s + average(l.buyPricePerSqftINR), 0) / filtered.length
+    }, [filtered, overallAvgSqft])
+
+    const totalPrice = sizeSqft * pricePerSqft
+    const loanAmount = totalPrice * (1 - downPaymentPct / 100)
+    const monthlyEmi = calculateEmi(loanAmount, interestRatePct, tenureYears)
+    const totalPayment = monthlyEmi * tenureYears * 12
+    const totalInterest = totalPayment - loanAmount
 
     return (
         <section>
@@ -89,10 +109,81 @@ export function HousingSection() {
                     </tbody>
                 </table>
             </div>
-            <p className='muted small'>
-                Rule of thumb: a 1,400 sqft 3BHK at ₹9,000/sqft ≈ ₹1.26 Cr. With a typical 20% down payment and the rest as a
-                home loan at ~8.5% over 20 years, the EMI on the loan portion works out to roughly ₹85,000–95,000/month.
-            </p>
+            <div className='calc-group'>
+                <h4>EMI calculator</h4>
+                <div className='calc-grid'>
+                    <label>
+                        Flat size (sqft)
+                        <input type='number' min={300} step={50} value={sizeSqft} onChange={(e) => setSizeSqft(Number(e.target.value))} />
+                    </label>
+                    <label>
+                        Price per sqft (₹)
+                        <input
+                            type='number'
+                            min={1000}
+                            step={100}
+                            value={pricePerSqft}
+                            onChange={(e) => setPricePerSqft(Number(e.target.value))}
+                        />
+                        <button type='button' className='link-button' onClick={() => setPricePerSqft(Math.round(suggestedPricePerSqft))}>
+                            Use average for current selection ({formatINR(Math.round(suggestedPricePerSqft))})
+                        </button>
+                    </label>
+                    <label>
+                        Down payment %
+                        <input
+                            type='number'
+                            min={0}
+                            max={90}
+                            value={downPaymentPct}
+                            onChange={(e) => setDownPaymentPct(Number(e.target.value))}
+                        />
+                    </label>
+                    <label>
+                        Interest rate %
+                        <input
+                            type='number'
+                            min={1}
+                            max={20}
+                            step={0.1}
+                            value={interestRatePct}
+                            onChange={(e) => setInterestRatePct(Number(e.target.value))}
+                        />
+                    </label>
+                    <label>
+                        Tenure (years)
+                        <input type='number' min={1} max={30} value={tenureYears} onChange={(e) => setTenureYears(Number(e.target.value))} />
+                    </label>
+                </div>
+                <table className='breakdown' style={{ marginTop: '12px' }}>
+                    <tbody>
+                        <tr>
+                            <td>Total price</td>
+                            <td>{formatINR(totalPrice)}</td>
+                        </tr>
+                        <tr>
+                            <td>Down payment</td>
+                            <td>{formatINR(totalPrice - loanAmount)}</td>
+                        </tr>
+                        <tr>
+                            <td>Loan amount</td>
+                            <td>{formatINR(loanAmount)}</td>
+                        </tr>
+                        <tr className='total-row'>
+                            <td>Monthly EMI</td>
+                            <td>{formatINR(monthlyEmi)}</td>
+                        </tr>
+                        <tr>
+                            <td>Total interest over {tenureYears} years</td>
+                            <td>{formatINR(totalInterest)}</td>
+                        </tr>
+                        <tr>
+                            <td>Total repaid (loan + interest)</td>
+                            <td>{formatINR(totalPayment)}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
     )
 }
