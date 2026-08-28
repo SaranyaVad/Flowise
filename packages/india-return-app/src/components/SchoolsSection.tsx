@@ -6,6 +6,7 @@ import { distanceKm } from '../calc'
 
 const tiers: (SchoolTier | 'all')[] = ['all', 'budget', 'mid', 'premium']
 const radiusOptions = [2, 5, 10, 15, 20, 30]
+const ratingOptions = [4.5, 4, 3.5, 3]
 
 function StarRating({ score }: { score: number }) {
     const full = Math.floor(score)
@@ -27,6 +28,7 @@ export function SchoolsSection() {
     const [query, setQuery] = useState('')
     const [nearLocality, setNearLocality] = useState('all')
     const [radiusKm, setRadiusKm] = useState(10)
+    const [minRating, setMinRating] = useState(0)
 
     const boards = useMemo(() => {
         const set = new Set<string>()
@@ -47,6 +49,7 @@ export function SchoolsSection() {
             if (board !== 'all' && !s.boards.includes(board)) return false
             if (query && !`${s.name} ${s.area}`.toLowerCase().includes(query.toLowerCase())) return false
             if (referenceCoords && distanceKm(referenceCoords, s.coordinates) > radiusKm) return false
+            if (minRating > 0 && s.reputationScore < minRating) return false
             return true
         })
         .sort((a, b) => {
@@ -89,6 +92,17 @@ export function SchoolsSection() {
                         {boards.map((b) => (
                             <option key={b} value={b}>
                                 {b === 'all' ? 'All' : b}
+                            </option>
+                        ))}
+                    </select>
+                </label>
+                <label>
+                    Min rating{' '}
+                    <select value={minRating} onChange={(e) => setMinRating(Number(e.target.value))}>
+                        <option value={0}>Any</option>
+                        {ratingOptions.map((r) => (
+                            <option key={r} value={r}>
+                                {r.toFixed(1)}+ ★
                             </option>
                         ))}
                     </select>
