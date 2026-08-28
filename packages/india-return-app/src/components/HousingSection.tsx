@@ -6,16 +6,26 @@ const tiers: (LocalityTier | 'all')[] = ['all', 'budget', 'mid', 'premium']
 
 export function HousingSection() {
     const [tierFilter, setTierFilter] = useState<LocalityTier | 'all'>('all')
-    const filtered = localities.filter((l) => tierFilter === 'all' || l.tier === tierFilter)
+    const [query, setQuery] = useState('')
+    const filtered = localities.filter((l) => {
+        if (tierFilter !== 'all' && l.tier !== tierFilter) return false
+        if (query && !`${l.name} ${l.knownFor}`.toLowerCase().includes(query.toLowerCase())) return false
+        return true
+    })
 
     return (
         <section>
             <h2>Housing — Rent vs Buy</h2>
             <p className='section-intro'>
-                Indicative 2025 rent and purchase prices by locality. Actual numbers vary a lot by building age, floor and
-                amenities — treat these as budgeting ranges, not quotes.
+                Indicative 2025 rent and purchase prices by locality across the city — IT corridor, north, northeast, east, and
+                the old city core. Actual numbers vary a lot by building age, floor and amenities — treat these as budgeting
+                ranges, not quotes.
             </p>
             <div className='filters'>
+                <label>
+                    Search{' '}
+                    <input type='text' placeholder='Locality name…' value={query} onChange={(e) => setQuery(e.target.value)} />
+                </label>
                 <label>
                     Tier{' '}
                     <select value={tierFilter} onChange={(e) => setTierFilter(e.target.value as LocalityTier | 'all')}>
@@ -27,6 +37,9 @@ export function HousingSection() {
                     </select>
                 </label>
             </div>
+            <p className='muted small' style={{ marginTop: '-8px', marginBottom: '12px' }}>
+                Showing {filtered.length} of {localities.length} localities
+            </p>
             <div className='table-wrap'>
                 <table>
                     <thead>

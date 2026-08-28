@@ -21,6 +21,7 @@ function StarRating({ score }: { score: number }) {
 export function SchoolsSection() {
     const [tierFilter, setTierFilter] = useState<SchoolTier | 'all'>('all')
     const [board, setBoard] = useState<string>('all')
+    const [query, setQuery] = useState('')
 
     const boards = useMemo(() => {
         const set = new Set<string>()
@@ -31,6 +32,7 @@ export function SchoolsSection() {
     const filtered = schools.filter((s) => {
         if (tierFilter !== 'all' && s.tier !== tierFilter) return false
         if (board !== 'all' && !s.boards.includes(board)) return false
+        if (query && !`${s.name} ${s.area}`.toLowerCase().includes(query.toLowerCase())) return false
         return true
     })
 
@@ -44,6 +46,15 @@ export function SchoolsSection() {
                 inspection body (no Ofsted equivalent), so treat it as a rough signal, not an audited score.
             </p>
             <div className='filters'>
+                <label>
+                    Search{' '}
+                    <input
+                        type='text'
+                        placeholder='School or area name…'
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                    />
+                </label>
                 <label>
                     Tier{' '}
                     <select value={tierFilter} onChange={(e) => setTierFilter(e.target.value as SchoolTier | 'all')}>
@@ -65,6 +76,9 @@ export function SchoolsSection() {
                     </select>
                 </label>
             </div>
+            <p className='muted small' style={{ marginTop: '-8px', marginBottom: '16px' }}>
+                Showing {filtered.length} of {schools.length} schools
+            </p>
             <div className='card-grid'>
                 {filtered.map((s) => (
                     <div className='card' key={s.name}>
