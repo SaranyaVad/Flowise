@@ -3,15 +3,19 @@ import { SchoolsSection } from './components/SchoolsSection'
 import { HousingSection } from './components/HousingSection'
 import { SalariesSection } from './components/SalariesSection'
 import { LifestyleCalculator } from './components/LifestyleCalculator'
+import { MapSection } from './components/MapSection'
+import { InsightsSection } from './components/InsightsSection'
 import { CITY } from './data/schools'
 
-type Tab = 'schools' | 'housing' | 'salaries' | 'calculator'
+type Tab = 'schools' | 'housing' | 'map' | 'salaries' | 'calculator' | 'insights'
 
 const tabs: { id: Tab; label: string }[] = [
     { id: 'schools', label: 'Schools & Fees' },
     { id: 'housing', label: 'Rent vs Buy' },
+    { id: 'map', label: 'Map' },
     { id: 'salaries', label: 'Salaries & Seniority' },
-    { id: 'calculator', label: 'Lifestyle Calculator' }
+    { id: 'calculator', label: 'Lifestyle Calculator' },
+    { id: 'insights', label: 'Common Questions' }
 ]
 
 export default function App() {
@@ -33,8 +37,10 @@ export default function App() {
             <main className='app-main'>
                 {tab === 'schools' && <SchoolsSection />}
                 {tab === 'housing' && <HousingSection />}
+                {tab === 'map' && <MapSection />}
                 {tab === 'salaries' && <SalariesSection />}
                 {tab === 'calculator' && <LifestyleCalculator />}
+                {tab === 'insights' && <InsightsSection onNavigate={(t) => setTab(t as Tab)} />}
             </main>
             <footer className='app-footer'>
                 <p className='muted small'>

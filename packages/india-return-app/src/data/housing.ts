@@ -9,6 +9,8 @@ export interface Locality {
         threeBHK: [number, number]
     }
     buyPricePerSqftINR: [number, number]
+    /** Approximate [lat, lng] of the locality centre — for map placement, not a precise boundary. */
+    coordinates: [number, number]
 }
 
 // Indicative 2025 figures gathered from listing sites (99acres, NoBroker, SquareYards, OLX)
@@ -20,56 +22,64 @@ export const localities: Locality[] = [
         tier: 'premium',
         knownFor: 'IT hub, closest to major tech campuses, top international schools',
         rentMonthlyINR: { twoBHK: [25000, 35000], threeBHK: [35000, 55000] },
-        buyPricePerSqftINR: [9850, 13850]
+        buyPricePerSqftINR: [9850, 13850],
+        coordinates: [17.4401, 78.3489]
     },
     {
         name: 'Financial District',
         tier: 'premium',
         knownFor: 'Corporate HQs, premium high-rises, expat/CXO crowd',
         rentMonthlyINR: { twoBHK: [30000, 45000], threeBHK: [40000, 75000] },
-        buyPricePerSqftINR: [9500, 14000]
+        buyPricePerSqftINR: [9500, 14000],
+        coordinates: [17.4126, 78.3466]
     },
     {
         name: 'Kokapet / Neopolis',
         tier: 'premium',
         knownFor: 'Newest premium high-rise corridor, strong price appreciation',
         rentMonthlyINR: { twoBHK: [28000, 40000], threeBHK: [38000, 65000] },
-        buyPricePerSqftINR: [9300, 13200]
+        buyPricePerSqftINR: [9300, 13200],
+        coordinates: [17.403, 78.3245]
     },
     {
         name: 'Kondapur',
         tier: 'mid',
         knownFor: 'Well-established, good schools and social infra, 10-15 min from Gachibowli',
         rentMonthlyINR: { twoBHK: [15000, 30000], threeBHK: [25000, 45000] },
-        buyPricePerSqftINR: [7000, 10500]
+        buyPricePerSqftINR: [7000, 10500],
+        coordinates: [17.4615, 78.3676]
     },
     {
         name: 'Madhapur / HITEC City',
         tier: 'mid',
         knownFor: 'Walk-to-work for many IT campuses, dense social infra',
         rentMonthlyINR: { twoBHK: [20000, 32000], threeBHK: [30000, 50000] },
-        buyPricePerSqftINR: [7500, 11000]
+        buyPricePerSqftINR: [7500, 11000],
+        coordinates: [17.4483, 78.3915]
     },
     {
         name: 'Manikonda / Nanakramguda',
         tier: 'mid',
         knownFor: 'Value-for-money alternative close to Gachibowli/Financial District',
         rentMonthlyINR: { twoBHK: [16000, 26000], threeBHK: [24000, 40000] },
-        buyPricePerSqftINR: [6500, 9500]
+        buyPricePerSqftINR: [6500, 9500],
+        coordinates: [17.4023, 78.3809]
     },
     {
         name: 'Kukatpally / Miyapur',
         tier: 'budget',
         knownFor: 'More affordable, metro-connected, longer commute to Gachibowli IT corridor',
         rentMonthlyINR: { twoBHK: [12000, 20000], threeBHK: [18000, 30000] },
-        buyPricePerSqftINR: [5500, 8000]
+        buyPricePerSqftINR: [5500, 8000],
+        coordinates: [17.4849, 78.4138]
     },
     {
         name: 'Banjara Hills / Jubilee Hills',
         tier: 'premium',
         knownFor: 'Legacy premium address, central location, top schools nearby',
         rentMonthlyINR: { twoBHK: [30000, 50000], threeBHK: [45000, 90000] },
-        buyPricePerSqftINR: [10000, 16000]
+        buyPricePerSqftINR: [10000, 16000],
+        coordinates: [17.4156, 78.4347]
     }
 ]
 

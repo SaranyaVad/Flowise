@@ -273,3 +273,87 @@ th {
     padding-top: 16px;
     border-top: 1px solid var(--border);
 }
+
+/* Star ratings */
+.stars {
+    color: var(--accent);
+    letter-spacing: 1px;
+    font-size: 0.95rem;
+}
+
+.stars-score {
+    color: var(--muted);
+    font-size: 0.8rem;
+    margin-left: 6px;
+    letter-spacing: normal;
+}
+
+/* Map */
+.legend {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+    font-size: 0.85rem;
+}
+
+.legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.legend i {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.map-wrap {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+    background: var(--surface);
+    color: var(--text);
+}
+
+.leaflet-popup-content {
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+    color: var(--muted);
+}
+
+/* Common Questions */
+.insight-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.insight-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+}
+
+.insight-item h3 {
+    margin: 0 0 8px;
+    font-size: 1rem;
+}
+
+.insight-item p {
+    margin: 0 0 8px;
+    font-size: 0.92rem;
+    line-height: 1.55;
+    color: var(--text);
+}

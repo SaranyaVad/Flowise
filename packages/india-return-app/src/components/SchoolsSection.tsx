@@ -4,6 +4,20 @@ import { formatRangeINR } from '../format'
 
 const tiers: (SchoolTier | 'all')[] = ['all', 'budget', 'mid', 'premium']
 
+function StarRating({ score }: { score: number }) {
+    const full = Math.floor(score)
+    const half = score - full >= 0.5
+    const empty = 5 - full - (half ? 1 : 0)
+    return (
+        <span className='stars' aria-label={`${score} out of 5`}>
+            {'★'.repeat(full)}
+            {half ? '⯨' : ''}
+            {'☆'.repeat(empty)}
+            <span className='stars-score'>{score.toFixed(1)}</span>
+        </span>
+    )
+}
+
 export function SchoolsSection() {
     const [tierFilter, setTierFilter] = useState<SchoolTier | 'all'>('all')
     const [board, setBoard] = useState<string>('all')
@@ -25,7 +39,9 @@ export function SchoolsSection() {
             <h2>Schools & Fees</h2>
             <p className='section-intro'>
                 Annual tuition fee ranges for well-known schools in Hyderabad. Fees typically rise 8-10% a year and vary by
-                grade/campus — confirm current figures with the school before committing.
+                grade/campus — confirm current figures with the school before committing. The rating shown is an informal
+                reputation score aggregated from published rankings and parent-review sites — India has no single official
+                inspection body (no Ofsted equivalent), so treat it as a rough signal, not an audited score.
             </p>
             <div className='filters'>
                 <label>
@@ -57,6 +73,10 @@ export function SchoolsSection() {
                         <p>
                             <span className={`tag tag-${s.tier}`}>{schoolTierLabels[s.tier]}</span>
                         </p>
+                        <p>
+                            <StarRating score={s.reputationScore} />
+                        </p>
+                        <p className='muted small'>{s.reputationNote}</p>
                         <p>
                             <strong>Boards:</strong> {s.boards.join(', ')}
                         </p>
