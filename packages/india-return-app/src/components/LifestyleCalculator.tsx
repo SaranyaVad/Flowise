@@ -12,6 +12,14 @@ const HOME_LOAN_DOWN_PAYMENT_PCT = 20
 const FLAT_SIZE_SQFT = { twoBHK: 1000, threeBHK: 1450 }
 const SAVINGS_MARGIN = 1.2 // target take-home = expenses * this margin, to leave room for savings/emergencies
 
+const LIFESTYLE_CATEGORY_LABELS: { key: keyof (typeof lifestyleBaselines)[number]['monthlyPerAdultINR']; label: string }[] = [
+    { key: 'groceriesFood', label: 'Groceries & food' },
+    { key: 'transport', label: 'Transport' },
+    { key: 'utilitiesPhoneInternet', label: 'Utilities / phone / internet' },
+    { key: 'healthcareInsurance', label: 'Healthcare / insurance' },
+    { key: 'discretionaryLifestyle', label: 'Discretionary (dining, shopping, travel)' }
+]
+
 export function LifestyleCalculator() {
     const [adults, setAdults] = useState(2)
     const [kids, setKids] = useState(1)
@@ -21,6 +29,13 @@ export function LifestyleCalculator() {
     const [localityTier, setLocalityTier] = useState<LocalityTier>('mid')
     const [wantsCar, setWantsCar] = useState(true)
     const [wantsHelp, setWantsHelp] = useState(true)
+    const [showLifestyleDetail, setShowLifestyleDetail] = useState(false)
+
+    const selectedBaseline = lifestyleBaselines.find((b) => b.tier === lifestyleTier)!
+    const selectedBaselinePerAdultTotal = LIFESTYLE_CATEGORY_LABELS.reduce(
+        (sum, c) => sum + selectedBaseline.monthlyPerAdultINR[c.key],
+        0
+    )
 
     const result = useMemo(() => {
         const baseline = lifestyleBaselines.find((b) => b.tier === lifestyleTier)!
@@ -104,6 +119,9 @@ export function LifestyleCalculator() {
                             </option>
                         ))}
                     </select>
+                    <button type='button' className='link-button' onClick={() => setShowLifestyleDetail((v) => !v)}>
+                        {showLifestyleDetail ? 'Hide' : 'What does this include?'}
+                    </button>
                 </label>
                 <label>
                     School tier
@@ -137,6 +155,36 @@ export function LifestyleCalculator() {
                     Domestic help
                 </label>
             </div>
+
+            {showLifestyleDetail && (
+                <div className='lifestyle-detail'>
+                    <h4>{selectedBaseline.label} lifestyle — what's in it</h4>
+                    <p className='muted small'>{selectedBaseline.description}</p>
+                    <table className='breakdown'>
+                        <tbody>
+                            {LIFESTYLE_CATEGORY_LABELS.map((c) => (
+                                <tr key={c.key}>
+                                    <td>{c.label}</td>
+                                    <td>{formatINR(selectedBaseline.monthlyPerAdultINR[c.key])}</td>
+                                </tr>
+                            ))}
+                            <tr className='total-row'>
+                                <td>Per adult, per month</td>
+                                <td>{formatINR(selectedBaselinePerAdultTotal)}</td>
+                            </tr>
+                            <tr>
+                                <td>Domestic help (household, if selected below)</td>
+                                <td>{formatINR(selectedBaseline.domesticHelpMonthlyINR)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p className='muted small'>
+                        This is per-adult living cost only — housing, schooling, car and domestic help are added separately
+                        below based on your other choices. A child is estimated at {Math.round(CHILD_COST_MULTIPLIER * 100)}% of
+                        an adult's food/healthcare/discretionary spend (no transport/utilities), plus schooling if applicable.
+                    </p>
+                </div>
+            )}
 
             <div className='result-card'>
                 <h3>Estimated monthly budget</h3>
