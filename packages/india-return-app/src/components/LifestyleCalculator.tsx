@@ -89,7 +89,9 @@ export function LifestyleCalculator() {
             totalMonthly,
             totalAnnual,
             targetAnnualTakeHome,
-            requiredCtc
+            targetMonthlyTakeHome: targetAnnualTakeHome / 12,
+            requiredCtc,
+            requiredMonthlyCtc: requiredCtc / 12
         }
     }, [adults, kids, lifestyleTier, schoolTier, housingMode, localityTier, wantsCar, wantsHelp])
 
@@ -97,8 +99,8 @@ export function LifestyleCalculator() {
         <section>
             <h2>Lifestyle Calculator</h2>
             <p className='section-intro'>
-                Estimate a monthly budget and the annual CTC you'd need to sustain it comfortably (target take-home ={' '}
-                {SAVINGS_MARGIN}x expenses, leaving room for savings). All figures are Hyderabad-specific 2025-26 estimates —
+                Estimate a monthly budget and the monthly/annual salary you'd need to sustain it comfortably (target take-home
+                = {SAVINGS_MARGIN}x expenses, leaving room for savings). All figures are Hyderabad-specific 2025-26 estimates —
                 use them for planning, not as guarantees.
             </p>
             <div className='calc-grid'>
@@ -238,13 +240,15 @@ export function LifestyleCalculator() {
 
                 <div className='headline-result'>
                     <div>
-                        <span className='label'>Target annual take-home (with {Math.round((SAVINGS_MARGIN - 1) * 100)}% savings margin)</span>
-                        <span className='value'>{formatINR(result.targetAnnualTakeHome)}</span>
+                        <span className='label'>Target take-home (with {Math.round((SAVINGS_MARGIN - 1) * 100)}% savings margin)</span>
+                        <span className='value'>{formatINR(result.targetMonthlyTakeHome)}/month</span>
+                        <span className='sub-value'>{formatINR(result.targetAnnualTakeHome)}/year</span>
                     </div>
                     <div>
                         <span className='label'>Estimated CTC needed</span>
-                        <span className='value big'>
-                            {formatINR(result.requiredCtc)} ({formatLPA(result.requiredCtc)})
+                        <span className='value big'>{formatINR(result.requiredMonthlyCtc)}/month</span>
+                        <span className='sub-value'>
+                            {formatINR(result.requiredCtc)}/year ({formatLPA(result.requiredCtc)})
                         </span>
                     </div>
                 </div>
