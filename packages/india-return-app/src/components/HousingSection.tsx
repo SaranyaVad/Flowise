@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { localities, localityTierLabels, LocalityTier } from '../data/housing'
 import { formatINR } from '../format'
 
@@ -6,10 +6,13 @@ const tiers: (LocalityTier | 'all')[] = ['all', 'budget', 'mid', 'premium']
 
 export function HousingSection() {
     const [tierFilter, setTierFilter] = useState<LocalityTier | 'all'>('all')
-    const [query, setQuery] = useState('')
+    const [localityName, setLocalityName] = useState('all')
+
+    const sortedNames = useMemo(() => [...localities.map((l) => l.name)].sort((a, b) => a.localeCompare(b)), [])
+
     const filtered = localities.filter((l) => {
+        if (localityName !== 'all') return l.name === localityName
         if (tierFilter !== 'all' && l.tier !== tierFilter) return false
-        if (query && !`${l.name} ${l.knownFor}`.toLowerCase().includes(query.toLowerCase())) return false
         return true
     })
 
@@ -23,12 +26,23 @@ export function HousingSection() {
             </p>
             <div className='filters'>
                 <label>
-                    Search{' '}
-                    <input type='text' placeholder='Locality name…' value={query} onChange={(e) => setQuery(e.target.value)} />
+                    Locality{' '}
+                    <select value={localityName} onChange={(e) => setLocalityName(e.target.value)}>
+                        <option value='all'>All localities</option>
+                        {sortedNames.map((name) => (
+                            <option key={name} value={name}>
+                                {name}
+                            </option>
+                        ))}
+                    </select>
                 </label>
                 <label>
                     Tier{' '}
-                    <select value={tierFilter} onChange={(e) => setTierFilter(e.target.value as LocalityTier | 'all')}>
+                    <select
+                        value={tierFilter}
+                        onChange={(e) => setTierFilter(e.target.value as LocalityTier | 'all')}
+                        disabled={localityName !== 'all'}
+                    >
                         {tiers.map((t) => (
                             <option key={t} value={t}>
                                 {t === 'all' ? 'All' : localityTierLabels[t]}
