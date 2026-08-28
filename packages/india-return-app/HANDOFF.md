@@ -123,25 +123,25 @@ All figures are labeled "indicative 2025–26" throughout the app, with an expli
 footer to verify before making financial decisions. **None of this data auto-updates** — refreshing
 it is a manual research task (see §6).
 
-## 5. The parallel Artifact (shareable preview link)
+## 5. The Artifact (shareable preview link)
 
 Because this session runs in a sandboxed container, a `localhost` link isn't reachable from outside
-it. A second, self-contained version of the app was built as a single HTML file
-(`return-to-hyderabad.html`, vanilla JS, no build step) and published as a Claude Artifact so it can
-be opened directly in a browser without cloning/running anything:
+it. The Artifact preview is now compiled from the **real app source itself** — `pnpm build:artifact`
+runs `vite build --config vite.artifact.config.ts`, which uses `vite-plugin-singlefile` to bundle the
+actual React/TS app (same components, same data files) into one self-contained HTML file. A small
+wrapper-tag-stripping step (see the package README) prepares it for the Artifact tool, which
+publishes/updates it at:
 
 **https://claude.ai/code/artifact/690d54eb-8849-4c0b-97af-90a5358ac8c6**
 
-This is a parallel implementation, not the same codebase — it mirrors the same data and logic by
-design, generated from the real TS data files to keep them in sync, but changes to one do not
-automatically propagate to the other. If the real app's data changes, the artifact needs to be
-regenerated separately (see §6).
+This replaced an earlier hand-maintained vanilla-JS mirror that could drift out of sync. Now the
+Artifact is a genuine build of this codebase, so **every change to the real app should be followed by
+re-running `pnpm build:artifact` and republishing** — this is a standing expectation, not a one-off.
 
 Because Artifacts block loading external map tile images (platform-level content policy, not
-something app code can override), the Artifact's Map tab is a hand-illustrated SVG schematic
-instead of a real Leaflet map — it draws the same 100 pins on a stylized layout with Hussain Sagar
-lake, the Musi River, and the Outer Ring Road sketched in as landmarks so it reads as "Hyderabad"
-rather than an abstract scatter plot. The real app's Map tab (§3) uses genuine map tiles.
+something app code can override), the Map tab's Leaflet tiles will not render inside the Artifact
+preview even though the underlying code is identical to the real app. It renders correctly on any
+normal developer machine or production deployment (see §3).
 
 ## 6. How to extend this
 
@@ -176,7 +176,13 @@ require real backend infrastructure that this static app doesn't have:
 
 - **NRI networking / "book a call" feature.** The idea: people can opt in to a directory (e.g. NRIs
   who've already moved back, or local experts), and others can book a call with them through the
-  website instead of exchanging phone numbers directly. This would need:
+  website instead of exchanging phone numbers directly. Refined scope from user feedback: the
+  first/priority slice of this should specifically surface **chartered accountants (CAs) who handle
+  returning-NRI tax cases**, with a way to book a call directly — this is the concrete need behind
+  the taxation content in Moving Costs and Common Questions, which currently only says "find a CA"
+  without helping the user actually find one. A directory of general "people who've moved back" is
+  still a valid later extension of the same underlying feature, just lower priority than the CA
+  use case. This would need:
   - User accounts/auth (sign-up, login, profile management)
   - A directory/listing system with search and enrollment
   - A booking/calendar system (availability, scheduling, timezone handling)

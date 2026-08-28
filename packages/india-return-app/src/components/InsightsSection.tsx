@@ -4,7 +4,8 @@ const SEE_ALSO_TAB: Record<string, string> = {
     'Schools & Fees': 'schools',
     'Rent vs Buy': 'housing',
     'Salaries & Seniority': 'salaries',
-    'Lifestyle Calculator': 'calculator'
+    'Lifestyle Calculator': 'calculator',
+    'Moving Costs': 'movecosts'
 }
 
 export function InsightsSection({ onNavigate }: { onNavigate: (tab: string) => void }) {

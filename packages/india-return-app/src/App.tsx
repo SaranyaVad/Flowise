@@ -5,11 +5,12 @@ import { SalariesSection } from './components/SalariesSection'
 import { LifestyleCalculator } from './components/LifestyleCalculator'
 import { MapSection } from './components/MapSection'
 import { InsightsSection } from './components/InsightsSection'
+import { MoveCostsSection } from './components/MoveCostsSection'
 import { CurrencyProvider, useCurrency, currencies } from './CurrencyContext'
 import { CurrencyCode } from './data/currency'
 import { CITY } from './data/schools'
 
-type Tab = 'schools' | 'housing' | 'map' | 'salaries' | 'calculator' | 'insights'
+type Tab = 'schools' | 'housing' | 'map' | 'salaries' | 'calculator' | 'movecosts' | 'insights'
 
 const tabs: { id: Tab; label: string }[] = [
     { id: 'schools', label: 'Schools & Fees' },
@@ -17,6 +18,7 @@ const tabs: { id: Tab; label: string }[] = [
     { id: 'map', label: 'Map' },
     { id: 'salaries', label: 'Salaries & Seniority' },
     { id: 'calculator', label: 'Lifestyle Calculator' },
+    { id: 'movecosts', label: 'Moving Costs' },
     { id: 'insights', label: 'Common Questions' }
 ]
 
@@ -64,6 +66,7 @@ function AppShell() {
                 {tab === 'map' && <MapSection />}
                 {tab === 'salaries' && <SalariesSection />}
                 {tab === 'calculator' && <LifestyleCalculator />}
+                {tab === 'movecosts' && <MoveCostsSection />}
                 {tab === 'insights' && <InsightsSection onNavigate={(t) => setTab(t as Tab)} />}
             </main>
             <footer className='app-footer'>

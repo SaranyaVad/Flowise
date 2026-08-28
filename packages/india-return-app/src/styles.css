@@ -139,6 +139,19 @@ input[type='number'] {
     margin-top: 12px;
 }
 
+.callout-note {
+    background: rgba(251, 146, 60, 0.08);
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-top: 24px;
+}
+
+.callout-note h4 {
+    margin: 0 0 6px;
+    color: var(--accent);
+}
+
 .lifestyle-detail h4 {
     margin: 0 0 4px;
 }

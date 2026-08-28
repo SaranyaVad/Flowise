@@ -55,5 +55,23 @@ export const insights: Insight[] = [
         answer:
             'If you have school-age kids, move in summer — Indian academic years mostly run June/July to March/April, and mid-year transfers are harder to get into good schools. Align your notice period and move date to that admissions calendar, not just to visa or work timelines.',
         seeAlso: 'Schools & Fees'
+    },
+    {
+        question: '"What about taxes — my old country\'s, and India\'s on the way in?"',
+        answer:
+            "This is the one area where a general answer can actively mislead you, because it hinges on your citizenship, income sources, asset locations and exact move date. What's worth knowing before you talk to a professional: India has an RNOR (\"Resident but Not Ordinarily Resident\") transition status — typically up to 2 years after you become a tax resident — during which foreign-source income generally isn't taxed in India, which is why timing your move and asset sales matters. Separately, your NRE/FCNR bank accounts need to be redesignated once you're a resident (banks want to know within weeks, not months). On the origin-country side, the rules vary hugely — US citizens/green card holders, for instance, keep tax filing obligations (and often FBAR/FATCA reporting) regardless of where they live, which is a very different situation from, say, a UK or Gulf-country departure. None of this is a number this app can give you — find a chartered accountant who specifically handles returning-NRI cases (not just general tax prep), before you sell assets or time a big transfer.",
+        seeAlso: undefined
+    },
+    {
+        question: '"How much money can I bring into India, and does it cost anything?"',
+        answer:
+            "Bringing money into India isn't capped the way sending it out is (India's Liberalised Remittance Scheme caps outward transfers at $250,000/person/year — relevant later, not on the way in). What does cost you: banks typically mark up the exchange rate 2-5% above the real mid-market rate plus a flat wire fee, while specialist transfer services (Wise-style) tend to run 0.5-1.5% at the real rate — on a large sum (selling a house, cashing out savings) that spread is real money. Compare live quotes from 2-3 options before moving anything sizeable, and loop in the same CA who's advising on your tax timing, since how and when you transfer can itself have tax implications.",
+        seeAlso: 'Moving Costs'
+    },
+    {
+        question: '"What other one-off costs come with the move itself, beyond monthly living costs?"',
+        answer:
+            "Easy to underbudget for: flights, shipping household goods (a sea container from the US/UK typically runs ₹3-8L depending on size), a car if you're buying one, furnishing a flat (Indian rentals/purchases are usually handed over as a bare shell — interiors commonly run ₹15-50L+ for a mid-size flat), a housewarming ceremony if your family observes one, paperwork (OCI cards, document apostille, driving licence conversion), temporary accommodation while house-hunting, and a cash buffer for the first few months before income stabilises. None of this is part of the recurring monthly budget.",
+        seeAlso: 'Moving Costs'
     }
 ]
