@@ -258,6 +258,25 @@ th {
     color: var(--muted);
 }
 
+.price-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(52, 211, 153, 0.12);
+    border: 1px solid var(--accent-2);
+    border-radius: 8px;
+    padding: 6px 12px;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--accent-2);
+}
+
+.price-box .price-label {
+    font-weight: 400;
+    color: var(--muted);
+}
+
 .calc-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));

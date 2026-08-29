@@ -183,9 +183,11 @@ export function MoveCostsSection() {
                         </select>
                     </label>
                 </div>
-                <p className='muted small' style={{ marginTop: '8px' }}>
-                    One-way, economy, per person — {formatMoneyRange(flightEstimates[flightRegionIdx].perPersonOneWayINR)} each.
-                </p>
+                <p className='muted small' style={{ marginTop: '8px' }}>One-way, economy, per person.</p>
+                <div className='price-box'>
+                    <span className='price-label'>Per person:</span>
+                    {formatMoneyRange(flightEstimates[flightRegionIdx].perPersonOneWayINR)}
+                </div>
             </div>
 
             <div className='calc-group'>
@@ -206,6 +208,10 @@ export function MoveCostsSection() {
                     {shippingOptions[shippingIdx].description}. Typical transit: {shippingOptions[shippingIdx].duration}. Add
                     ~20-30% if you want insurance and inland trucking beyond a basic quote.
                 </p>
+                <div className='price-box'>
+                    <span className='price-label'>Estimated:</span>
+                    {formatMoneyRange(shippingOptions[shippingIdx].costINR)}
+                </div>
             </div>
 
             <div className='calc-group'>
@@ -241,10 +247,15 @@ export function MoveCostsSection() {
                     )}
                 </div>
                 {wantsCar && (
-                    <p className='muted small' style={{ marginTop: '8px' }}>
-                        On-road price {formatMoneyRange(carSegments[carSegmentIdx].onRoadPriceINR)}; the rest is financed via a
-                        car loan (10-90% financing is typical — see banks' car loan terms).
-                    </p>
+                    <>
+                        <p className='muted small' style={{ marginTop: '8px' }}>
+                            The rest is financed via a car loan (10-90% financing is typical — see banks' car loan terms).
+                        </p>
+                        <div className='price-box'>
+                            <span className='price-label'>On-road price:</span>
+                            {formatMoneyRange(carSegments[carSegmentIdx].onRoadPriceINR)}
+                        </div>
+                    </>
                 )}
             </div>
 
@@ -294,13 +305,15 @@ export function MoveCostsSection() {
                         </select>
                     </label>
                 </div>
-                <p className='muted small' style={{ marginTop: '8px' }}>
-                    {interiorTiers[interiorTierIdx].description} — {formatMoneyRange(interiorTiers[interiorTierIdx].perSqftINR)}/sqft.
-                </p>
+                <p className='muted small' style={{ marginTop: '8px' }}>{interiorTiers[interiorTierIdx].description}</p>
+                <div className='price-box'>
+                    <span className='price-label'>Per sqft:</span>
+                    {formatMoneyRange(interiorTiers[interiorTierIdx].perSqftINR)}
+                </div>
             </div>
 
             <div className='calc-group'>
-                <h4>Miscellaneous (housewarming, gifts & extras)</h4>
+                <h4>Miscellaneous</h4>
                 <p className='muted small'>
                     A housewarming/griha pravesh if your family observes one, plus the small unplanned extras every move
                     brings — welcome gifts, odds and ends. Pick the scale that's closest to what you expect.
@@ -318,6 +331,10 @@ export function MoveCostsSection() {
                     </label>
                 </div>
                 <p className='muted small' style={{ marginTop: '8px' }}>{miscTiers[miscIdx].description}</p>
+                <div className='price-box'>
+                    <span className='price-label'>Estimated:</span>
+                    {formatMoneyRange(miscCost)}
+                </div>
             </div>
 
             <div className='calc-group'>
@@ -364,7 +381,11 @@ export function MoveCostsSection() {
                         <input type='number' min={0} max={90} value={tempNights} onChange={(e) => setTempNights(Number(e.target.value))} />
                     </label>
                 </div>
-                <p className='muted small' style={{ marginTop: '8px' }}>{formatMoneyRange(tempAccommodationPerNightINR)}/night, mid-range serviced apartment/hotel.</p>
+                <p className='muted small' style={{ marginTop: '8px' }}>Mid-range serviced apartment/hotel.</p>
+                <div className='price-box'>
+                    <span className='price-label'>Per night:</span>
+                    {formatMoneyRange(tempAccommodationPerNightINR)}
+                </div>
             </div>
 
             <div className='calc-group'>
@@ -389,7 +410,13 @@ export function MoveCostsSection() {
                     )}
                 </div>
                 {needsStorage && (
-                    <p className='muted small' style={{ marginTop: '8px' }}>{formatMoneyRange(storageMonthlyINR)}/month — varies a lot by origin city.</p>
+                    <>
+                        <p className='muted small' style={{ marginTop: '8px' }}>Varies a lot by origin city.</p>
+                        <div className='price-box'>
+                            <span className='price-label'>Per month:</span>
+                            {formatMoneyRange(storageMonthlyINR)}
+                        </div>
+                    </>
                 )}
             </div>
 
@@ -422,9 +449,13 @@ export function MoveCostsSection() {
                     )}
                 </div>
                 {needsInterimHealth && (
-                    <p className='muted small' style={{ marginTop: '8px' }}>
-                        {formatMoneyRange(interimHealthInsuranceMonthlyINR)}/month for the family, international/travel cover.
-                    </p>
+                    <>
+                        <p className='muted small' style={{ marginTop: '8px' }}>For the family, international/travel cover.</p>
+                        <div className='price-box'>
+                            <span className='price-label'>Per month:</span>
+                            {formatMoneyRange(interimHealthInsuranceMonthlyINR)}
+                        </div>
+                    </>
                 )}
             </div>
 
@@ -473,7 +504,7 @@ export function MoveCostsSection() {
                             <td>{formatMoneyRange([interiorCost.low, interiorCost.high])}</td>
                         </tr>
                         <tr>
-                            <td>Miscellaneous (housewarming, gifts & extras)</td>
+                            <td>Miscellaneous</td>
                             <td>{formatMoneyRange(miscCost)}</td>
                         </tr>
                         <tr>
@@ -539,10 +570,10 @@ export function MoveCostsSection() {
                         </select>
                     </label>
                 </div>
-                <p className='muted small' style={{ marginTop: '8px' }}>
-                    Estimated cost of this transfer: <strong>{formatMoneyRange([transferCostEstimate.low, transferCostEstimate.high])}</strong> lost
-                    to fees/spread.
-                </p>
+                <div className='price-box'>
+                    <span className='price-label'>Lost to fees/spread:</span>
+                    {formatMoneyRange([transferCostEstimate.low, transferCostEstimate.high])}
+                </div>
             </div>
 
             <div className='callout-note'>
