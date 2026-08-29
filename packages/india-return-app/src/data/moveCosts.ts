@@ -16,6 +16,17 @@ export const flightEstimates: FlightEstimate[] = [
     { region: 'Australia', perPersonOneWayINR: [40000, 100000] }
 ]
 
+// What "retirement/investment accounts" actually means varies a lot by origin country — keyed to
+// the same region list above so the tax callout can name the right thing instead of defaulting to
+// a US-specific term like 401(k).
+export const retirementAccountNotesByRegion: Record<string, string> = {
+    'USA / Canada': '401(k)/IRA in the US, or RRSP/TFSA in Canada',
+    'UK / Europe': 'workplace or personal pensions',
+    'UAE / Middle East': 'end-of-service gratuity and any personal investment accounts',
+    'Singapore / Southeast Asia': 'CPF or your country’s equivalent retirement scheme',
+    Australia: 'superannuation'
+}
+
 export interface ShippingOption {
     label: string
     description: string

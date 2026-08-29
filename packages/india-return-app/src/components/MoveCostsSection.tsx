@@ -9,6 +9,7 @@ import {
     tempAccommodationPerNightINR,
     storageMonthlyINR,
     interimHealthInsuranceMonthlyINR,
+    retirementAccountNotesByRegion,
     bankTransferSpreadPct,
     specialistTransferSpreadPct
 } from '../data/moveCosts'
@@ -59,6 +60,9 @@ export function MoveCostsSection() {
     }, [flightRegionIdx, travelers])
 
     const shippingCost = shippingOptions[shippingIdx].costINR
+
+    const retirementAccountNote =
+        retirementAccountNotesByRegion[flightEstimates[flightRegionIdx].region] ?? 'your retirement/pension and investment accounts'
 
     const carDownPayment = useMemo(() => {
         if (!wantsCar) return { low: 0, high: 0 }
@@ -550,10 +554,10 @@ export function MoveCostsSection() {
                     (chartered accountant) — which is genuinely the right next step, not a calculator.
                 </p>
                 <p className='muted small' style={{ marginTop: '8px' }}>
-                    This also covers <strong>retirement and investment accounts</strong> (401(k)/pension/ISA-style accounts):
-                    whether to cash out or leave them in place, and any exit tax that triggers, depends entirely on your
-                    account type, country and residency status — another reason to loop this into the same CA conversation
-                    rather than guess.
+                    This also covers <strong>retirement and investment accounts</strong> — for the region you picked above,
+                    that typically means {retirementAccountNote}. Whether to cash out or leave them in place, and any exit
+                    tax that triggers, depends entirely on your account type, country and residency status — another reason
+                    to loop this into the same CA conversation rather than guess.
                 </p>
             </div>
         </section>
