@@ -69,16 +69,19 @@ export const interiorTiers: InteriorTier[] = [
     { label: 'Luxury', description: 'High-end materials, premium modular kitchen, imported finishes', perSqftINR: [2600, 3800] }
 ]
 
-export interface HousewarmingTier {
+export interface MiscTier {
     label: string
     description: string
     costINR: [number, number]
 }
 
-export const housewarmingTiers: HousewarmingTier[] = [
-    { label: 'Small', description: 'Immediate family only, priest + puja samagri', costINR: [5000, 15000] },
-    { label: 'Medium', description: 'Extended family & friends, catering for ~30-50 guests', costINR: [30000, 80000] },
-    { label: 'Large', description: 'Full event — bigger guest list, catering, decor', costINR: [100000, 300000] }
+// Housewarming (griha pravesh) folded in here as one example, alongside the other small unplanned
+// extras that come with any move — welcome gifts, a family gathering, odds and ends you forgot to
+// budget for elsewhere.
+export const miscTiers: MiscTier[] = [
+    { label: 'Small', description: 'A modest housewarming (immediate family, priest + puja samagri) plus a little extra for odds and ends', costINR: [5000, 20000] },
+    { label: 'Medium', description: 'Housewarming with extended family & friends (~30-50 guests), plus welcome gifts and general extras', costINR: [30000, 90000] },
+    { label: 'Large', description: 'A full housewarming event (bigger guest list, catering, decor) plus a generous miscellaneous cushion', costINR: [100000, 320000] }
 ]
 
 export interface DocumentationCost {
@@ -97,6 +100,14 @@ export const documentationCosts: DocumentationCost[] = [
 ]
 
 export const tempAccommodationPerNightINR: [number, number] = [3000, 8000]
+
+// Storage in the origin country if you're not shipping/selling everything at once — per month, a
+// small-to-medium unit. Highly dependent on origin city; treat as a rough planning range.
+export const storageMonthlyINR: [number, number] = [4000, 15000]
+
+// Interim/gap health insurance for the family — covers the window between losing employer coverage
+// abroad and Indian coverage (employer or a new policy) actually kicking in. Per month, family cover.
+export const interimHealthInsuranceMonthlyINR: [number, number] = [15000, 45000]
 
 // Money transfer: bank wires typically mark up the exchange rate 2-5% above mid-market plus flat
 // fees ($5-75); specialist services (Wise-style) typically run 0.5-1.5% with the real mid-market

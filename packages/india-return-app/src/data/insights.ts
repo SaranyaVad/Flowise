@@ -71,7 +71,7 @@ export const insights: Insight[] = [
     {
         question: '"What other one-off costs come with the move itself, beyond monthly living costs?"',
         answer:
-            "Easy to underbudget for: flights, shipping household goods (a sea container from the US/UK typically runs ₹3-8L depending on size), a car if you're buying one, furnishing a flat (Indian rentals/purchases are usually handed over as a bare shell — interiors commonly run ₹15-50L+ for a mid-size flat), a housewarming ceremony if your family observes one, paperwork (OCI cards, document apostille, driving licence conversion), temporary accommodation while house-hunting, and a cash buffer for the first few months before income stabilises. None of this is part of the recurring monthly budget.",
+            "Easy to underbudget for: flights, shipping household goods (a sea container from the US/UK typically runs ₹3-8L depending on size), settling up abroad (an early lease-break penalty, closing utility accounts), a car if you're buying one, furnishing a flat (Indian rentals/purchases are usually handed over as a bare shell — interiors commonly run ₹15-50L+ for a mid-size flat), a housewarming and other miscellaneous extras, paperwork (OCI cards, document apostille, driving licence conversion), temporary accommodation while house-hunting, storage back home if you're not shipping everything at once, interim health insurance for the gap between coverages, and a cash buffer for the first few months before income stabilises. A school's one-time admission fee (separate from tuition) is worth checking too. None of this is part of the recurring monthly budget.",
         seeAlso: 'Moving Costs'
     }
 ]

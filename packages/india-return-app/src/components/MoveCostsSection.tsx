@@ -4,9 +4,11 @@ import {
     shippingOptions,
     carSegments,
     interiorTiers,
-    housewarmingTiers,
+    miscTiers,
     documentationCosts,
     tempAccommodationPerNightINR,
+    storageMonthlyINR,
+    interimHealthInsuranceMonthlyINR,
     bankTransferSpreadPct,
     specialistTransferSpreadPct
 } from '../data/moveCosts'
@@ -28,7 +30,7 @@ export function MoveCostsSection() {
     const [flatSizeSqft, setFlatSizeSqft] = useState(1400)
     const [interiorTierIdx, setInteriorTierIdx] = useState(1)
 
-    const [housewarmingIdx, setHousewarmingIdx] = useState(1)
+    const [miscIdx, setMiscIdx] = useState(1)
 
     const [needOci, setNeedOci] = useState(false)
     const [needApostille, setNeedApostille] = useState(true)
@@ -36,6 +38,14 @@ export function MoveCostsSection() {
     const [hasPet, setHasPet] = useState(false)
 
     const [tempNights, setTempNights] = useState(14)
+
+    const [exitSettlementCost, setExitSettlementCost] = useState(50000)
+
+    const [needsStorage, setNeedsStorage] = useState(false)
+    const [storageMonths, setStorageMonths] = useState(2)
+
+    const [needsInterimHealth, setNeedsInterimHealth] = useState(true)
+    const [healthGapMonths, setHealthGapMonths] = useState(2)
 
     const [bufferMonths, setBufferMonths] = useState(3)
     const [monthlyBudget, setMonthlyBudget] = useState(150000)
@@ -61,7 +71,7 @@ export function MoveCostsSection() {
         return { low: r[0] * flatSizeSqft, high: r[1] * flatSizeSqft }
     }, [interiorTierIdx, flatSizeSqft])
 
-    const housewarmingCost = housewarmingTiers[housewarmingIdx].costINR
+    const miscCost = miscTiers[miscIdx].costINR
 
     const docCostRows = documentationCosts.filter((d) => {
         if (d.label === 'OCI card') return needOci
@@ -77,29 +87,63 @@ export function MoveCostsSection() {
         [tempNights]
     )
 
+    const storageCost = useMemo(
+        () =>
+            needsStorage
+                ? { low: storageMonthlyINR[0] * storageMonths, high: storageMonthlyINR[1] * storageMonths }
+                : { low: 0, high: 0 },
+        [needsStorage, storageMonths]
+    )
+
+    const interimHealthCost = useMemo(
+        () =>
+            needsInterimHealth
+                ? { low: interimHealthInsuranceMonthlyINR[0] * healthGapMonths, high: interimHealthInsuranceMonthlyINR[1] * healthGapMonths }
+                : { low: 0, high: 0 },
+        [needsInterimHealth, healthGapMonths]
+    )
+
     const bufferCost = bufferMonths * monthlyBudget
 
     const grandTotal = useMemo(() => {
         const low =
             flightCost.low +
             shippingCost[0] +
+            exitSettlementCost +
             carDownPayment.low +
             interiorCost.low +
-            housewarmingCost[0] +
+            miscCost[0] +
             docCostTotal +
             tempAccommodationCost.low +
+            storageCost.low +
+            interimHealthCost.low +
             bufferCost
         const high =
             flightCost.high +
             shippingCost[1] +
+            exitSettlementCost +
             carDownPayment.high +
             interiorCost.high +
-            housewarmingCost[1] +
+            miscCost[1] +
             docCostTotal +
             tempAccommodationCost.high +
+            storageCost.high +
+            interimHealthCost.high +
             bufferCost
         return { low, high }
-    }, [flightCost, shippingCost, carDownPayment, interiorCost, housewarmingCost, docCostTotal, tempAccommodationCost, bufferCost])
+    }, [
+        flightCost,
+        shippingCost,
+        exitSettlementCost,
+        carDownPayment,
+        interiorCost,
+        miscCost,
+        docCostTotal,
+        tempAccommodationCost,
+        storageCost,
+        interimHealthCost,
+        bufferCost
+    ])
 
     const transferCostEstimate = useMemo(() => {
         const spread = transferMethod === 'bank' ? bankTransferSpreadPct : specialistTransferSpreadPct
@@ -111,9 +155,10 @@ export function MoveCostsSection() {
             <h2>Moving & One-Time Costs</h2>
             <p className='section-intro'>
                 The one-time costs of the move itself — separate from the recurring monthly budget in the Lifestyle
-                Calculator. Flights, shipping, buying a car, furnishing an unfurnished flat (very common in India), a
-                housewarming, paperwork, temporary accommodation while house-hunting, and a savings buffer for the first
-                few months. All figures are indicative and vary a lot by origin country, mover, and personal choices.
+                Calculator. Flights, shipping, settling up abroad, buying a car, furnishing an unfurnished flat (very
+                common in India), miscellaneous extras, paperwork, temporary accommodation, storage, interim health
+                insurance, and a savings buffer for the first few months. All figures are indicative and vary a lot by
+                origin country, mover, and personal choices.
             </p>
 
             <div className='calc-group'>
@@ -200,6 +245,27 @@ export function MoveCostsSection() {
             </div>
 
             <div className='calc-group'>
+                <h4>Settling up abroad</h4>
+                <p className='muted small'>
+                    Winding down life in your origin country: an early lease-break penalty, move-out cleaning, closing
+                    utility accounts. Selling a car you're not bringing, or getting deposits back, usually offsets some of
+                    this — enter your best net estimate.
+                </p>
+                <div className='calc-grid'>
+                    <label>
+                        Net exit costs (₹)
+                        <input
+                            type='number'
+                            min={0}
+                            step={5000}
+                            value={exitSettlementCost}
+                            onChange={(e) => setExitSettlementCost(Number(e.target.value))}
+                        />
+                    </label>
+                </div>
+            </div>
+
+            <div className='calc-group'>
                 <h4>Interiors & furnishing</h4>
                 <p className='muted small'>Most Indian flats — rented or bought — are handed over as a bare shell.</p>
                 <div className='calc-grid'>
@@ -230,20 +296,24 @@ export function MoveCostsSection() {
             </div>
 
             <div className='calc-group'>
-                <h4>Housewarming (griha pravesh)</h4>
+                <h4>Miscellaneous (housewarming, gifts & extras)</h4>
+                <p className='muted small'>
+                    A housewarming/griha pravesh if your family observes one, plus the small unplanned extras every move
+                    brings — welcome gifts, odds and ends. Pick the scale that's closest to what you expect.
+                </p>
                 <div className='calc-grid'>
                     <label>
                         Scale
-                        <select value={housewarmingIdx} onChange={(e) => setHousewarmingIdx(Number(e.target.value))}>
-                            {housewarmingTiers.map((h, i) => (
-                                <option key={h.label} value={i}>
-                                    {h.label}
+                        <select value={miscIdx} onChange={(e) => setMiscIdx(Number(e.target.value))}>
+                            {miscTiers.map((m, i) => (
+                                <option key={m.label} value={i}>
+                                    {m.label}
                                 </option>
                             ))}
                         </select>
                     </label>
                 </div>
-                <p className='muted small' style={{ marginTop: '8px' }}>{housewarmingTiers[housewarmingIdx].description}</p>
+                <p className='muted small' style={{ marginTop: '8px' }}>{miscTiers[miscIdx].description}</p>
             </div>
 
             <div className='calc-group'>
@@ -294,6 +364,67 @@ export function MoveCostsSection() {
             </div>
 
             <div className='calc-group'>
+                <h4>Storage</h4>
+                <p className='muted small'>If you're not shipping or selling everything at once, a storage unit back in your origin country bridges the gap.</p>
+                <div className='calc-grid'>
+                    <label className='checkbox-label'>
+                        <input type='checkbox' checked={needsStorage} onChange={(e) => setNeedsStorage(e.target.checked)} />
+                        Need storage
+                    </label>
+                    {needsStorage && (
+                        <label>
+                            Months
+                            <input
+                                type='number'
+                                min={1}
+                                max={24}
+                                value={storageMonths}
+                                onChange={(e) => setStorageMonths(Number(e.target.value))}
+                            />
+                        </label>
+                    )}
+                </div>
+                {needsStorage && (
+                    <p className='muted small' style={{ marginTop: '8px' }}>{formatMoneyRange(storageMonthlyINR)}/month — varies a lot by origin city.</p>
+                )}
+            </div>
+
+            <div className='calc-group'>
+                <h4>Interim health insurance</h4>
+                <p className='muted small'>
+                    The gap between losing employer health coverage abroad and Indian coverage (a new employer's policy,
+                    or one you buy yourself) actually starting.
+                </p>
+                <div className='calc-grid'>
+                    <label className='checkbox-label'>
+                        <input
+                            type='checkbox'
+                            checked={needsInterimHealth}
+                            onChange={(e) => setNeedsInterimHealth(e.target.checked)}
+                        />
+                        Need gap coverage
+                    </label>
+                    {needsInterimHealth && (
+                        <label>
+                            Months of gap
+                            <input
+                                type='number'
+                                min={1}
+                                max={12}
+                                value={healthGapMonths}
+                                onChange={(e) => setHealthGapMonths(Number(e.target.value))}
+                            />
+                        </label>
+                    )}
+                </div>
+                {needsInterimHealth && (
+                    <p className='muted small' style={{ marginTop: '8px' }}>
+                        {formatMoneyRange(interimHealthInsuranceMonthlyINR)}/month for the family, international/travel cover.
+                    </p>
+                )}
+            </div>
+
+            <div className='calc-group'>
                 <h4>Buffer / contingency fund</h4>
                 <p className='muted small'>
                     A cushion for the first few months while income stabilises — enter your monthly budget from the Lifestyle
@@ -323,6 +454,10 @@ export function MoveCostsSection() {
                             <td>Shipping household goods</td>
                             <td>{formatMoneyRange(shippingCost)}</td>
                         </tr>
+                        <tr>
+                            <td>Settling up abroad</td>
+                            <td>{formatMoney(exitSettlementCost)}</td>
+                        </tr>
                         {wantsCar && (
                             <tr>
                                 <td>Car down payment</td>
@@ -334,8 +469,8 @@ export function MoveCostsSection() {
                             <td>{formatMoneyRange([interiorCost.low, interiorCost.high])}</td>
                         </tr>
                         <tr>
-                            <td>Housewarming</td>
-                            <td>{formatMoneyRange(housewarmingCost)}</td>
+                            <td>Miscellaneous (housewarming, gifts & extras)</td>
+                            <td>{formatMoneyRange(miscCost)}</td>
                         </tr>
                         <tr>
                             <td>Paperwork & setup</td>
@@ -345,6 +480,18 @@ export function MoveCostsSection() {
                             <td>Temporary accommodation ({tempNights} nights)</td>
                             <td>{formatMoneyRange([tempAccommodationCost.low, tempAccommodationCost.high])}</td>
                         </tr>
+                        {needsStorage && (
+                            <tr>
+                                <td>Storage ({storageMonths} months)</td>
+                                <td>{formatMoneyRange([storageCost.low, storageCost.high])}</td>
+                            </tr>
+                        )}
+                        {needsInterimHealth && (
+                            <tr>
+                                <td>Interim health insurance ({healthGapMonths} months)</td>
+                                <td>{formatMoneyRange([interimHealthCost.low, interimHealthCost.high])}</td>
+                            </tr>
+                        )}
                         <tr>
                             <td>Buffer ({bufferMonths} months)</td>
                             <td>{formatMoney(bufferCost)}</td>
@@ -357,7 +504,8 @@ export function MoveCostsSection() {
                 </table>
                 <p className='muted small'>
                     This is on top of the recurring monthly budget from the Lifestyle Calculator, and separate from a house
-                    down payment (already covered by the EMI calculator on the Rent vs Buy tab).
+                    down payment (already covered by the EMI calculator on the Rent vs Buy tab) and a school's one-time
+                    admission fee (shown per-school on the Schools & Fees tab — easy to forget it's separate from tuition).
                 </p>
             </div>
 
@@ -400,6 +548,12 @@ export function MoveCostsSection() {
                     varies too much to give a figure here, and getting it wrong is costly. See the tax questions in{' '}
                     <strong>Common Questions</strong> for the concepts to know before you talk to a cross-border tax CA
                     (chartered accountant) — which is genuinely the right next step, not a calculator.
+                </p>
+                <p className='muted small' style={{ marginTop: '8px' }}>
+                    This also covers <strong>retirement and investment accounts</strong> (401(k)/pension/ISA-style accounts):
+                    whether to cash out or leave them in place, and any exit tax that triggers, depends entirely on your
+                    account type, country and residency status — another reason to loop this into the same CA conversation
+                    rather than guess.
                 </p>
             </div>
         </section>
